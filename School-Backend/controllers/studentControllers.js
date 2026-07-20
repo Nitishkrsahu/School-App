@@ -58,4 +58,65 @@ const getStudentById = async (req, res) => {
     });
   }
 };
-module.exports = createStudent, getStudentById, getAllStudents;
+
+const updateStudent = async (req, res) => {
+  try {
+    const student = await Student.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Student updated successfully.",
+      data: student,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deleteStudent = async (req, res) => {
+  try {
+    const student = await Student.findByIdAndDelete(req.params.id);
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Student deleted successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createStudent,
+  getStudentById,
+  getAllStudents,
+  updateStudent,
+  deleteStudent
+};

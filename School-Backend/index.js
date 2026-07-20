@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const DatabaseConnection = require('./config/db');
 const studentRoute = require('./routes/student');
+const authRoute = require('./routes/auth.routes');
 require('dotenv').config();
 
 const port = process.env.PORT;
@@ -13,6 +14,7 @@ DatabaseConnection();
 
 
 app.use("/api/students", studentRoute);
+app.use('/api/auth', authRoute);
 
 app.listen(port, ()=>{
     console.log(`Server is running on ${port}`);
