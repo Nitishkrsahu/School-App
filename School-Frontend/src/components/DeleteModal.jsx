@@ -4,7 +4,8 @@ const DeleteModal = ({
   show,
   onClose,
   onDelete,
-  student
+  student,
+  loading = false
 }) => {
 
 
@@ -36,6 +37,7 @@ const DeleteModal = ({
             <button
               className="btn-close btn-close-white"
               onClick={onClose}
+              disabled={loading}
             ></button>
 
 
@@ -52,7 +54,7 @@ const DeleteModal = ({
             <p>
               You want to delete
               <strong>
-                {" "}{student.firstName} {student.lastName}
+                {" "}{student?.firstName} {student?.lastName}
               </strong>
             </p>
 
@@ -67,6 +69,7 @@ const DeleteModal = ({
             <button
               className="btn btn-secondary"
               onClick={onClose}
+              disabled={loading}
             >
               Cancel
             </button>
@@ -75,10 +78,24 @@ const DeleteModal = ({
             <button
               className="btn btn-danger"
               onClick={onDelete}
+              disabled={loading}
             >
 
-              <i className="bi bi-trash"></i>
-              Delete
+              {loading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-trash"></i>
+                  Delete
+                </>
+              )}
 
             </button>
 

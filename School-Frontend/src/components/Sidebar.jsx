@@ -1,7 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Sidebar = () => {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+  
+    const handleLogout = () => {
+      logout();
+      navigate("/");
+    };
   return (
     <div
       className="bg-dark text-white p-3"
@@ -59,7 +68,7 @@ const Sidebar = () => {
         </li>
 
         <li className="nav-item mb-2">
-          <Link className="nav-link text-danger" to="#">
+          <Link className="nav-link text-danger" to="#" onClick={handleLogout}>
             <span className="bi bi-door-open text-danger"></span> Logout
           </Link>
         </li>

@@ -1,6 +1,6 @@
 import React from "react";
 
-const StudentCard = ({ student }) => {
+const StudentCard = ({ student, onEdit, onDelete }) => {
   return (
     <div
       className="card shadow border-0 rounded-4 h-100"
@@ -12,10 +12,26 @@ const StudentCard = ({ student }) => {
       }}
     >
 
-      <div className="card-header bg-primary text-white">
+      <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h5 className="mb-0">
           🎓 Student Details
         </h5>
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-sm btn-warning text-dark"
+            onClick={() => onEdit(student)}
+            title="Edit Student"
+          >
+            <i className="bi bi-pencil"></i>
+          </button>
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={() => onDelete(student)}
+            title="Delete Student"
+          >
+            <i className="bi bi-trash"></i>
+          </button>
+        </div>
       </div>
 
 

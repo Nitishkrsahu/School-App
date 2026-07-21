@@ -34,10 +34,17 @@ exports.login = async (req, res) => {
 
         const token = generateToken(user._id);
 
+        // Remove password from user object before sending
+        const userResponse = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+        };
+
         res.json({
             success: true,
             token,
-            user,
+            user: userResponse,
         });
 
     } catch (err) {

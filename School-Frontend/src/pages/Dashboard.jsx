@@ -3,20 +3,26 @@ import axios from "axios";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import StudentCard from "../components/StudentCard";
+import { useAuth } from "../hooks/useAuth";
 
 const Dashboard = () => {
 
   const [students, setStudents] = useState([]);
+  const { token } = useAuth();
 
   useEffect(() => {
     getStudents();
-  }, []);
+  }, [token]);
 
   const getStudents = async () => {
 
     try {
 
-      const res = await axios.get("http://localhost:5000/api/students");
+      const res = await axios.get("http://localhost:5000/api/students", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setStudents(res.data.data);
 
