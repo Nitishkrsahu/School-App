@@ -3,6 +3,7 @@ const cors = require('cors');
 const DatabaseConnection = require('./config/db');
 const studentRoute = require('./routes/student');
 const authRoute = require('./routes/auth.routes');
+const path = require('path');
 require('dotenv').config();
 
 const port = process.env.PORT;
@@ -10,6 +11,10 @@ const port = process.env.PORT;
 const app = express();
 app.use(cors());
 app.use(express.json())
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 DatabaseConnection();
 
 

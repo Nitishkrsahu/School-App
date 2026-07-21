@@ -3,6 +3,7 @@ import axios from "axios";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import StudentCard from "../components/StudentCard";
+import AddStudentModal from "../components/AddStudentModal";
 import EditStudentModal from "../components/EditStudentModal";
 import DeleteModal from "../components/DeleteModal";
 import { useAuth } from "../hooks/useAuth";
@@ -11,10 +12,12 @@ const StudentPage = () => {
 
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showAddModal, setShowAddModal] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [studentToDelete, setStudentToDelete] = useState(null);
+    const [creating, setCreating] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState("");
@@ -53,6 +56,52 @@ const StudentPage = () => {
 
     };
 
+    const handleAddClick = () => {
+        setShowAddModal(true);
+        setError("");
+    };
+
+    const handleAddStudent = async (formData, profileImage) => {
+        setCreating(true);
+        setError("");
+
+        try {
+            const requestData = new FormData();
+
+            // Add form fields
+            Object.keys(formData).forEach((key) => {
+                requestData.append(key, formData[key]);
+            });
+
+            // Add image if provided
+            if (profileImage) {
+                requestData.append('profileImage', profileImage);
+            }
+
+            const res = await axios.post(
+                "http://localhost:5000/api/students",
+                requestData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+
+            // Add new student to list
+            setStudents([...students, res.data.data]);
+
+            setShowAddModal(false);
+
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to add student");
+            console.log(err);
+        } finally {
+            setCreating(false);
+        }
+    };
+
     const handleEditClick = (student) => {
         setEditingStudent(student);
         setShowEditModal(true);
@@ -65,17 +114,30 @@ const StudentPage = () => {
         setError("");
     };
 
-    const handleSaveStudent = async (formData) => {
+    const handleSaveStudent = async (formData, profileImage) => {
         setUpdating(true);
         setError("");
 
         try {
+            const requestData = new FormData();
+
+            // Add form fields
+            Object.keys(formData).forEach((key) => {
+                requestData.append(key, formData[key]);
+            });
+
+            // Add image if provided
+            if (profileImage) {
+                requestData.append('profileImage', profileImage);
+            }
+
             const res = await axios.put(
                 `http://localhost:5000/api/students/${editingStudent._id}`,
-                formData,
+                requestData,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
                     },
                 }
             );
@@ -134,7 +196,7 @@ const StudentPage = () => {
                     👨‍🎓 Students
                 </h2>
 
-                <button className="btn btn-primary">
+                <button className="btn btn-success" onClick={handleAddClick}>
                     + Add Student
                 </button>
 
@@ -189,6 +251,16 @@ const StudentPage = () => {
 
                 )
             }
+
+            <AddStudentModal
+                show={showAddModal}
+                onClose={() => {
+                    setShowAddModal(false);
+                    setError("");
+                }}
+                onSave={handleAddStudent}
+                loading={creating}
+            />
 
             <EditStudentModal
                 show={showEditModal}

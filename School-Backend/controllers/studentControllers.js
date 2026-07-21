@@ -3,7 +3,16 @@ const Student = require('../models/student');
 // Create Student
 const createStudent = async (req, res) => {
   try {
-    const student = await Student.create(req.body);
+    const studentData = {
+      ...req.body,
+    };
+
+    // If file is uploaded, add the file path
+    if (req.file) {
+      studentData.profileImage = `/uploads/${req.file.filename}`;
+    }
+
+    const student = await Student.create(studentData);
 
     res.status(201).json({
         success: true,
@@ -61,9 +70,16 @@ const getStudentById = async (req, res) => {
 
 const updateStudent = async (req, res) => {
   try {
+    const updateData = { ...req.body };
+
+    // If file is uploaded, add the file path
+    if (req.file) {
+      updateData.profileImage = `/uploads/${req.file.filename}`;
+    }
+
     const student = await Student.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       {
         new: true,
         runValidators: true,

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
+const AddStudentModal = ({ show, onClose, onSave, loading }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     rollNumber: "",
-    gender: "",
+    admissionNumber: "",
+    gender: "Male",
     dateOfBirth: "",
     class: "",
     section: "",
@@ -20,32 +21,6 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-
-  useEffect(() => {
-    if (student) {
-      setFormData({
-        firstName: student.firstName || "",
-        lastName: student.lastName || "",
-        rollNumber: student.rollNumber || "",
-        gender: student.gender || "",
-        dateOfBirth: student.dateOfBirth ? student.dateOfBirth.split('T')[0] : "",
-        class: student.class || "",
-        section: student.section || "",
-        academicYear: student.academicYear || "",
-        email: student.email || "",
-        phone: student.phone || "",
-        address: student.address || "",
-        parentName: student.parentName || "",
-        parentPhone: student.parentPhone || "",
-        status: student.status || "Active",
-      });
-      
-      // Set image preview
-      if (student.profileImage) {
-        setImagePreview(`http://localhost:5000${student.profileImage}`);
-      }
-    }
-  }, [student]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,6 +46,26 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData, profileImage);
+    // Reset form
+    setFormData({
+      firstName: "",
+      lastName: "",
+      rollNumber: "",
+      admissionNumber: "",
+      gender: "Male",
+      dateOfBirth: "",
+      class: "",
+      section: "",
+      academicYear: "",
+      email: "",
+      phone: "",
+      address: "",
+      parentName: "",
+      parentPhone: "",
+      status: "Active",
+    });
+    setProfileImage(null);
+    setImagePreview(null);
   };
 
   if (!show) return null;
@@ -84,9 +79,9 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
     >
       <div className="modal-dialog modal-dialog-centered modal-lg">
         <div className="modal-content rounded-4 shadow">
-          <div className="modal-header bg-primary text-white">
+          <div className="modal-header bg-success text-white">
             <h5 className="modal-title">
-              <i className="bi bi-pencil"></i> Edit Student
+              <i className="bi bi-plus-circle"></i> Add New Student
             </h5>
             <button
               className="btn-close btn-close-white"
@@ -139,14 +134,14 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
                   className="form-control mt-3"
                 />
                 <small className="text-muted">
-                  Max size: 5MB. Leave empty to keep current image.
+                  Max size: 5MB. Allowed formats: JPG, PNG, GIF, WebP
                 </small>
               </div>
 
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label htmlFor="firstName" className="form-label">
-                    First Name
+                    First Name *
                   </label>
                   <input
                     type="text"
@@ -161,7 +156,7 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="lastName" className="form-label">
-                    Last Name
+                    Last Name *
                   </label>
                   <input
                     type="text"
@@ -176,7 +171,7 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="rollNumber" className="form-label">
-                    Roll Number
+                    Roll Number *
                   </label>
                   <input
                     type="text"
@@ -190,8 +185,23 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
                 </div>
 
                 <div className="col-md-6 mb-3">
+                  <label htmlFor="admissionNumber" className="form-label">
+                    Admission Number *
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="admissionNumber"
+                    name="admissionNumber"
+                    value={formData.admissionNumber}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
                   <label htmlFor="gender" className="form-label">
-                    Gender
+                    Gender *
                   </label>
                   <select
                     className="form-control"
@@ -200,7 +210,6 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
                     value={formData.gender}
                     onChange={handleChange}
                   >
-                    <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -209,7 +218,7 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="dateOfBirth" className="form-label">
-                    Date of Birth
+                    Date of Birth *
                   </label>
                   <input
                     type="date"
@@ -218,12 +227,13 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleChange}
+                    required
                   />
                 </div>
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="class" className="form-label">
-                    Class
+                    Class *
                   </label>
                   <input
                     type="text"
@@ -238,7 +248,7 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="section" className="form-label">
-                    Section
+                    Section *
                   </label>
                   <input
                     type="text"
@@ -253,15 +263,17 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="academicYear" className="form-label">
-                    Academic Year
+                    Academic Year *
                   </label>
                   <input
                     type="text"
                     className="form-control"
                     id="academicYear"
                     name="academicYear"
+                    placeholder="2024-2025"
                     value={formData.academicYear}
                     onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -309,7 +321,7 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="parentName" className="form-label">
-                    Parent Name
+                    Parent Name *
                   </label>
                   <input
                     type="text"
@@ -324,7 +336,7 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
 
                 <div className="col-md-6 mb-3">
                   <label htmlFor="parentPhone" className="form-label">
-                    Parent Phone
+                    Parent Phone *
                   </label>
                   <input
                     type="tel"
@@ -366,7 +378,7 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
             </button>
 
             <button
-              className="btn btn-primary"
+              className="btn btn-success"
               onClick={handleSubmit}
               disabled={loading}
             >
@@ -377,11 +389,11 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
                     role="status"
                     aria-hidden="true"
                   ></span>
-                  Saving...
+                  Creating...
                 </>
               ) : (
                 <>
-                  <i className="bi bi-check"></i> Save Changes
+                  <i className="bi bi-check"></i> Add Student
                 </>
               )}
             </button>
@@ -392,4 +404,4 @@ const EditStudentModal = ({ show, onClose, onSave, student, loading }) => {
   );
 };
 
-export default EditStudentModal;
+export default AddStudentModal;
